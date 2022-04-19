@@ -1,0 +1,7 @@
+fastapi
+redis
+faker
+strawberry-graphql[fastapi]
+uvicorn[standard]
+broadcaster
+peewee
