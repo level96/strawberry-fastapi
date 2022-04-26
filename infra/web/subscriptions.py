@@ -13,19 +13,13 @@ class Subscription:
     @strawberry.subscription
     async def email(self, info: Info) -> AsyncGenerator[Email, None]:
         pubsub: MessageProvider = info.context.get('email_pubsub')
-        await pubsub.subscribe()
 
-        while True:
-            message = await pubsub.get_message()
-            if message and message['type'] == 'message':
-                yield Email.from_dict(json.loads(message['data']))
+        async for msg in pubsub.messages():
+            yield Email.from_dict(msg)
 
     @strawberry.subscription
     async def sms(self, info: Info) -> AsyncGenerator[Message, None]:
         pubsub: MessageProvider = info.context.get('sms_pubsub')
-        await pubsub.subscribe()
 
-        while True:
-            message = await pubsub.get_message()
-            if message and message['type'] == 'message':
-                yield Message.from_dict(json.loads(message['data']))
+        async for msg in pubsub.messages():
+            yield Message.from_dict(msg)

@@ -36,6 +36,12 @@ class EmailContact:
     first_name: str
     last_name: str
     email: str
+    message: 'Email'
+
+    # @strawberry.field(description='This is a description with `print(code)` ')
+    # async def message(self, root: 'EmailContact', info: Info) -> 'Email':
+    #     emails_loader: DataLoader = info.context.get('emails_loader')
+    #     return await emails_loader.load(root.message_id)
 
 
 @strawberry.type
@@ -45,17 +51,20 @@ class Email:
     updated_at: datetime
     from_: str
     to: List[str]
-    contacts: List[EmailContact]
     body: str
+    contacts: List[EmailContact]
 
-    @strawberry.field(description='This is a description with `print(code)` ')
-    async def contacts(self, root: 'Email', info: Info) -> List[EmailContact]:
-        contacts_loader: DataLoader = info.context.get('contacts_loader')
-        contact_ids_by_email_loader: DataLoader = info.context.get('contact_ids_by_email_loader')
+    # @strawberry.field(description='This is a description with `print(code)` ')
+    # async def contacts(self, root: 'Email', info: Info) -> List[EmailContact]:
+    #     contacts_loader: DataLoader = info.context.get('contacts_loader')
+    #     contact_ids_by_email_loader: DataLoader = info.context.get('contact_ids_by_email_loader')
+    #
+    #     email_id, contact_ids = await contact_ids_by_email_loader.load(root.id)
+    #     return await contacts_loader.load_many(contact_ids)
 
-        email_id, contact_ids = await contact_ids_by_email_loader.load(root.id)
-        valid_ids = filter(lambda x: bool(x), contact_ids)
-        return await contacts_loader.load_many(valid_ids)
+    @strawberry.field()
+    async def to(self, root: 'Email') -> List[str]:
+        return root.to.split(', ')
 
     @strawberry.field(deprecation_reason='outdated in favor for xxx')
     async def deprecated(self) -> Optional[str]:
@@ -70,4 +79,5 @@ class Email:
             from_=data['from_'],
             to=data['to'],
             body=data['body'],
+            contacts=[]
         )

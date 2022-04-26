@@ -20,4 +20,4 @@ class Query:
 
     @strawberry.field
     async def get_email(self, id: UUID, info: Info) -> Optional[Email]:
-        return EmailMessage.get(EmailMessage.id == id)
+        return EmailMessage.select().filter(EmailMessage.id == id)
