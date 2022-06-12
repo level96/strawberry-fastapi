@@ -3,7 +3,9 @@ from dataclasses import dataclass, field
 from typing import Optional, Iterable
 
 from core.entities import Email
-from infra.storage.models import EmailMessage
+
+
+# from infra.storage.models import EmailMessage
 
 
 @dataclass
@@ -18,7 +20,6 @@ class EmailInMemRepo:
 
     def list(self) -> Iterable[Email]:
         return self.state.values()
-
 
 # class EmailSQLRepo:
 #     def get(self, pk: UUID) -> Optional[Email]:

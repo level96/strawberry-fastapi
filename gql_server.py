@@ -1,8 +1,12 @@
-from typing import List
+from typing import List, Union, Optional
 
 import strawberry
 
 from faker import Faker
+from starlette.requests import Request
+from starlette.websockets import WebSocket
+from starlette.responses import Response
+
 from strawberry.subscriptions import GRAPHQL_TRANSPORT_WS_PROTOCOL, GRAPHQL_WS_PROTOCOL
 from strawberry.fastapi import GraphQLRouter
 from strawberry.extensions import QueryDepthLimiter
@@ -10,6 +14,7 @@ from fastapi import FastAPI
 
 from infra.messaging.provider import MessageProvider
 from infra.storage.repository import EmailInMemRepo
+from infra.storage.search import EmailSearchRepo
 from infra.web.mutations import Mutation
 from infra.web.queries import Query
 from infra.web.schema import EmailContact
@@ -27,6 +32,7 @@ SMS_CHANNEL = 'sms'
 fake = Faker()
 
 INMEM_REPO = EmailInMemRepo()
+SEARCH_REPO = EmailSearchRepo()
 
 
 async def load_email_contacts(keys) -> List[EmailContact]:
@@ -53,9 +59,10 @@ async def load_contact_ids_by_email(keys) -> List:
     return res.items()
 
 
-async def get_context():
+async def get_context():  # request: Union[Request, WebSocket], response: Optional[Response]):
     return {
         "repo": INMEM_REPO,
+        'search_repo': SEARCH_REPO,
         'email_pubsub': MessageProvider(channel=EMAIL_CHANNEL),
         'sms_pubsub': MessageProvider(channel=SMS_CHANNEL),
         'emails_loader': DataLoader(load_fn=load_emails),

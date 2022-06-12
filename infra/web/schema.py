@@ -38,10 +38,10 @@ class EmailContact:
     email: str
     message: 'Email'
 
-    # @strawberry.field(description='This is a description with `print(code)` ')
-    # async def message(self, root: 'EmailContact', info: Info) -> 'Email':
-    #     emails_loader: DataLoader = info.context.get('emails_loader')
-    #     return await emails_loader.load(root.message_id)
+    @strawberry.field(description='This is a description with `print(code)` ')
+    async def message(self, root: 'EmailContact', info: Info) -> 'Email':
+        emails_loader: DataLoader = info.context.get('emails_loader')
+        return await emails_loader.load(root.message_id)
 
 
 @strawberry.type
@@ -54,13 +54,13 @@ class Email:
     body: str
     contacts: List[EmailContact]
 
-    # @strawberry.field(description='This is a description with `print(code)` ')
-    # async def contacts(self, root: 'Email', info: Info) -> List[EmailContact]:
-    #     contacts_loader: DataLoader = info.context.get('contacts_loader')
-    #     contact_ids_by_email_loader: DataLoader = info.context.get('contact_ids_by_email_loader')
-    #
-    #     email_id, contact_ids = await contact_ids_by_email_loader.load(root.id)
-    #     return await contacts_loader.load_many(contact_ids)
+    @strawberry.field(description='This is a description with `print(code)` ')
+    async def contacts(self, root: 'Email', info: Info) -> List[EmailContact]:
+        contacts_loader: DataLoader = info.context.get('contacts_loader')
+        contact_ids_by_email_loader: DataLoader = info.context.get('contact_ids_by_email_loader')
+
+        email_id, contact_ids = await contact_ids_by_email_loader.load(root.id)
+        return await contacts_loader.load_many(contact_ids)
 
     @strawberry.field()
     async def to(self, root: 'Email') -> List[str]:

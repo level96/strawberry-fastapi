@@ -5,3 +5,4 @@ strawberry-graphql[fastapi]
 uvicorn[standard]
 broadcaster
 peewee
+elasticsearch[async]
